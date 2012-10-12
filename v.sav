@@ -1,0 +1,53 @@
+[*]
+[*] GTKWave Analyzer v3.3.37 (w)1999-2012 BSI
+[*] Fri Sep 21 13:55:58 2012
+[*]
+[dumpfile] "/home/roberto/digital/adm/trab/v_filtro.vcd"
+[dumpfile_mtime] "Fri Sep 21 13:55:21 2012"
+[dumpfile_size] 4931545
+[savefile] "/home/roberto/digital/adm/trab/v.sav"
+[timestart] 204702000000
+[size] 1121 586
+[pos] -1 -1
+*-26.356663 204825000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 210
+[signals_width] 144
+[sst_expanded] 1
+[sst_vpaned_height] 147
+@28
+rst
+rel
+@200
+-
+@22
+a[11:0]
+datrom[7:0]
+@28
+selrom
+@200
+-
+@28
+phase
+@200
+-
+@22
+a[11:0]
+@28
+selram
+@22
+datram[7:0]
+@28
+wr
+ramrdy
+@23
+lido[7:0]
+@200
+-
+@22
+u_ram_out.address[11:0]
+u_ram_out.data[7:0]
+@28
+u_ram_out.sel
+u_ram_out.wr
+[pattern_trace] 1
+[pattern_trace] 0

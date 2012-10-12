@@ -1,0 +1,59 @@
+## +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+## UFPR, ci312,ci702 2012-1 trabalho semestral, autor: Roberto Hexsel, 26set
+## +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+run.sh -- O script run.sh compila e executa a simulação.  Se um arquivo de
+entrada (matriz.txt) não existe, este é criado; os arquivos fonte são
+compilados e o simulador é gerado; a saída da versão inicial do testbench é
+processada para que a saída (valor lido da RAM) seja idêntica à entrada
+(valor escrito na ROM).  Se o script receber um argumento, o gtkwave é
+iniciado; sem argumento, ocorre somente a compilação.
+
+ATENÇÃO: este script supõe que a matriz de entrada tem 64x64 e foi
+         escrito apenas para testar as operações de acesso às
+         memórias ROM e RAM.
+         O script deverá ser adaptado para a leitura de um arquivo
+         com as dimensões da matriz de dados e dos próprios dados.
+
+
+
+aux.vhd -- código VHDL com somadores, portas lógicas, memórias.
+ESTE ARQUIVO NÃO PODE SER ALTERADO.
+
+
+
+filtro.vhd -- seu código para o modelo do filtro deve ser inserido neste
+arquivo.
+
+
+
+packageMatriz.vhd -- código VHDL com definições do tamanho da matriz.
+
+
+
+packageWires.vhd -- código VHDL com definições para o testbench.
+ESTE ARQUIVO NÃO PODE SER ALTERADO.
+
+
+
+tb_filtro.vhd -- embrião do testbench do filtro.  O programa dispara a
+leitura da matriz de entrada para a memória ROM e imprime seu conteúdo com
+um ASSERT.  Você deverá acrescentar código a este modelo para permitir a
+verificação do seu projeto.
+
+ATENÇÃO: o código do processo que inicializa a memória ROM ignora as
+         dimensões das matrizs e deve ser alterado.
+         o código da ROM e da RAM deve ser alterado para as dimensões
+         da matriz em uso.
+
+
+
+v.sav -- configuração do gtkwave.
+
+
+
+matriz.txt, result.txt -- arquivos de entrada e de saída para os testes.
+Cada linha contém um elemento (unsigned de 0 a 255), codificado em
+hexadecimal, sem prefixo.  Se não existem, duas matrizes de 64x64 são
+criadas por run.sh.

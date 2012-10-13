@@ -14,8 +14,8 @@ architecture TB of test is
 		);
 	end component isBorder;
 	
-	constant col: reg10 := "1111111111";
-	constant lin: reg10 := "1111111111";
+	constant col: reg10 := "0000000100";
+	constant lin: reg10 := "0000000100";
 	signal s_col, s_lin: reg10;
 	signal result: std_logic;
 begin

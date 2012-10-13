@@ -55,7 +55,10 @@ end estrutural;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Subtrator completo de 12 bits, modelo estrutural
+-- Subtrator completo de 12 bits, trato apenas resultados positivos
+-- ex: 10 - 4 OK
+-- ex: 4 - 10 Caso não tratado
+-- modelo estrutural
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 library IEEE; use IEEE.std_logic_1164.all;
 use work.p_wires.all;

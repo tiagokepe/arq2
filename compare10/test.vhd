@@ -1,5 +1,5 @@
 --++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- testbench para compador de 1 bit
+-- testbench para compador de 1 bit e 10 bits
 --++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 library ieee; use ieee.std_logic_1164.all;
 use work.p_wires.all;
@@ -15,8 +15,7 @@ architecture TB of test is
 
 	component compare10 is
 		port(A, B : in reg10;
-			 S    : out std_logic;
-			 aux  : out reg10);
+			 S    : out std_logic);
 	end component compare10;
 
 	component and10 is
@@ -39,7 +38,7 @@ begin
 		wait for 10 ns;
 	end process;
 
-	map10: compare10 port map(A10, B10, out10, aux10);
+	map10: compare10 port map(A10, B10, out10);
 	test0: process
 	begin
 		A10 <= "0000000000";
@@ -51,7 +50,23 @@ begin
 		B10 <= "0000000000";
 		wait for 10 ns;
 		assert (out10 = '0') report "Error in compare 10." severity failure;
+
+		A10 <= "1000000000";
+		B10 <= "1000000000";
+		wait for 10 ns;
+		assert (out10 = '1') report "Error in compare 10." severity failure;
+
+		A10 <= "1111111111";
+		B10 <= "1111111111";
+		wait for 10 ns;
+		assert (out10 = '1') report "Error in compare 10." severity failure;
+
+		A10 <= "1111111111";
+		B10 <= "1111111110";
+		wait for 10 ns;
+		assert (out10 = '0') report "Error in compare 10." severity failure;
 	end process;
+
 	mapBit: compareBit port map(
 		bitA => A,
 		bitB => B,

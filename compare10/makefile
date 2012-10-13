@@ -3,7 +3,7 @@ build:
 	ghdl -a --ieee=synopsys compare10.vhd
 
 compare10: build test
-	ghdl -r test --stop-time=30ns --vcd=trace.vcd
+	ghdl -r test --stop-time=60ns --vcd=trace.vcd
 	gtkwave trace.vcd
 
 test:

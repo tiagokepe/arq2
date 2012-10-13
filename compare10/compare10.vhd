@@ -183,8 +183,7 @@ use work.p_wires.all;
 
 entity compare10 is
   port(A, B : in reg10;  -- entradas A,Bestrutural em 
-       S    : out std_logic;
-	   aux	: out reg10);  -- saída S 
+       S    : out std_logic);  -- saída S 
 end compare10;
 
 architecture estrutural of compare10 is 
@@ -210,7 +209,6 @@ begin
 	U_b7: compareBit port map(A(7), B(7), v_out(7));
 	U_b8: compareBit port map(A(8), B(8), v_out(8));
 	U_b9: compareBit port map(A(9), B(9), v_out(9));
-	aux <= v_out;	
 	result: and10 port map(v_out, S);
 end estrutural;
 

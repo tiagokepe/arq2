@@ -7,7 +7,7 @@ library ieee; use ieee.std_logic_1164.all;
 use work.p_wires.all;
 
 entity seg0 is
-	port(clk, rst		 			: in  std_logic;
+	port(clk, rst, ld, en 			: in  std_logic;
 		 TAM_COL, TAM_LIN			: in  reg10;
 		 norte, sul, leste, atual	: out reg10;
 		 border 					: out std_logic
@@ -70,7 +70,7 @@ architecture estrutural of seg0 is
 begin
 	U_atual: count10 
 		generic map(2 ns)
-		port map(clk, rst, '1', '0', X"00"&"00", r_atual);
+		port map(clk, rst, ld, en, X"00"&"00", r_atual);
 
 	atual <= r_atual;
 

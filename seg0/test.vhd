@@ -9,28 +9,30 @@ end test;
 
 architecture TB of test is
 	component seg0 is
-		port(clk, rst		 			: in std_logic;
+		port(clk, rst, ld, en 			: in std_logic;
 			 TAM_COL, TAM_LIN			: in reg10;
 			 norte, sul, leste, atual	: out reg10;
 			 border 					: out std_logic
 		);
 	end component seg0;
 
-	signal s_rel, s_rst, s_border: std_logic;
+	signal s_rel, s_rst, s_border, s_ld, s_en: std_logic;
 	signal s_norte, s_sul, s_leste, s_atual: reg10;
 	constant CLOCK : time := 20 ns;
 	constant s_COL, s_LIN : reg10 := x"01"&"00";
 
 begin
 	mapeia: seg0
-		port map(s_rel, s_rst, s_COL, s_LIN, s_norte, s_sul, s_leste, s_atual,
-				 s_border);
+		port map(s_rel, s_rst, s_ld, s_en, s_COL, s_LIN, s_norte, s_sul, s_leste, 
+				 s_atual, s_border);
 
 --	U_test: process
 		
 --		wait for CLOCK;
 --	end process;
 
+	s_ld <= '1';
+	s_en <= '0';
 
 	U_clock: process
 	begin

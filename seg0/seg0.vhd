@@ -61,6 +61,10 @@ architecture estrutural of seg0 is
 	signal s_compCol: std_logic;
 	signal s_ld: std_logic;
 	signal s_en_lin: std_logic;
+	signal s_tam_col: reg10;
+	signal s_tam_lin: reg10;
+
+	constant UM : reg10 := x"00"&"01";
 
 	
 begin
@@ -68,9 +72,25 @@ begin
 		generic map(2 ns)
 		port map(clk, rst, '1', '0', X"00"&"00", r_atual);
 
+	atual <= r_atual;
+
+	U_calc_norte: sub10
+		port map(r_atual, TAM_COL, norte, '0', cout(0));
+
+	U_calc_sul: add10
+		port map(r_atual, TAM_COL, sul, '0', cout(0));
+
+	U_calc_leste: add10
+		port map(r_atual, X"00"&"01", leste, '0', cout(0));
+
+	-- Subtrai 1 de TAM_COL para acertar a entrada do isBorder
+	U_sub_tam_col: sub10
+		port map(TAM_COL, UM, s_tam_col, '0', cout(0));
+
+
 	-- Comparador que verifica de chegou no final de uma linha
 	U_compCcol_TAMCOL: compare10
-		port map(countCol, TAM_COL, s_compCol);
+		port map(countCol, s_tam_col, s_compCol);
 
 	s_ld <= not s_compCol; -- sinal de load do countCol
 
@@ -84,6 +104,16 @@ begin
 		generic map(2 ns)
 		port map(clk, rst, '1', s_en_lin, X"00"&"00", countLin);
 
+
+	-- Subtrai 1 de TAM_COL para acertar a entrada do isBorder
+--	U_sub_tam_col: sub10
+--		port map(TAM_COL, UM, s_tam_col, '0', cout(0));
+
+	-- Subtrai 1 de TAM_COL para acertar a entrada do isBorder
+--	U_sub_tam_lin: sub10
+--		port map(TAM_LIN, UM, s_tam_lin, '0', cout(0));
+
+
 	U_isBorder: isBorder
 		port map(countCol, countLin, TAM_COL, TAM_LIN, border);
 	
@@ -94,11 +124,6 @@ begin
 --			
 --		end if;
 --	end process;
-	
-	atual <= r_atual;
-
-	U_calc_norte: sub10
-		port map(r_atual, TAM_COL, norte, '0', cout(0));
 
 
 end estrutural;

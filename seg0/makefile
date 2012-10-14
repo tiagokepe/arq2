@@ -14,7 +14,7 @@ build:
 	ghdl -e --ieee=synopsys test
 
 run: build
-	ghdl -r test --stop-time=200ns --vcd=trace.vcd
+	ghdl -r test --stop-time=300ns --vcd=trace.vcd
 	gtkwave trace.vcd
 
 clean:

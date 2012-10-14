@@ -67,18 +67,38 @@ architecture estrutural of isBorder is
 		       S    : out std_logic);  -- saída S
 	end component compare10;
 
+	component sub10 is
+		port(inpA, inpB: in reg10;
+			 outC: out reg10;
+		     vem : in std_logic; -- vem-um
+		     vai : out std_logic);  -- saída vai-um
+	end component sub10;
+
+
 	component or4 is generic (prop:time);
 		port(A : in reg4;  -- entradas A,B,C
 			 S : out std_logic); -- saída S 
 	end component or4;	
 
+	signal cout: reg2;
 	signal result: reg4;
-	constant zero: reg10 := "0000000000";
+	signal s_tam_col, s_tam_lin: reg10;
+	constant ZERO: reg10 := "0000000000";
+	constant UM: reg10 := "0000000001";
+
 begin
-	ccol_0	: compare10 port map(ccol, zero, result(0));
-	clin_0	: compare10 port map(clin, zero, result(1));
-	ccol_COL: compare10 port map(ccol, COL,  result(2));
-	clin_LIN: compare10 port map(clin, LIN,  result(3));
+	-- Subtrai 1 de TAM_COL para acertar a entrada do isBorder
+	U_sub_tam_col: sub10
+		port map(COL, UM, s_tam_col, '0', cout(0));
+
+	-- Subtrai 1 de TAM_COL para acertar a entrada do isBorder
+	U_sub_tam_lin: sub10
+		port map(LIN, UM, s_tam_lin, '0', cout(1));
+
+	ccol_0	: compare10 port map(ccol, ZERO, result(0));
+	clin_0	: compare10 port map(clin, ZERO, result(1));
+	ccol_COL: compare10 port map(ccol, s_tam_col,  result(2));
+	clin_LIN: compare10 port map(clin, s_tam_lin,  result(3));
 
 	final   : or4 generic map(1.3 ns) port map(result, border);
 

@@ -18,8 +18,8 @@ architecture TB of test is
 
 	signal s_rel, s_rst, s_border: std_logic;
 	signal s_norte, s_sul, s_leste, s_atual: reg10;
-	constant CLOCK : time := 10 ns;
-	constant s_COL, s_LIN : reg10 := x"00"&"11";
+	constant CLOCK : time := 20 ns;
+	constant s_COL, s_LIN : reg10 := x"01"&"00";
 
 begin
 	mapeia: seg0

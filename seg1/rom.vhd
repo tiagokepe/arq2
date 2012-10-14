@@ -15,7 +15,7 @@ entity ROM is
            MEM_LATENCY: time := 10 ns);
   port (rst     : in    std_logic;
         sel     : in    std_logic;
-        address : in    addressMem;   -- depende do tamanho da matriz
+        address : in    address;   -- depende do tamanho da matriz
         data    : inout reg8);
 end entity ROM;
 

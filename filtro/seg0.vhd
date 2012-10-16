@@ -104,26 +104,7 @@ begin
 		generic map(2 ns)
 		port map(clk, rst, '1', s_en_lin, X"00"&"00", countLin);
 
-
-	-- Subtrai 1 de TAM_COL para acertar a entrada do isBorder
---	U_sub_tam_col: sub10
---		port map(TAM_COL, UM, s_tam_col, '0', cout(0));
-
-	-- Subtrai 1 de TAM_COL para acertar a entrada do isBorder
---	U_sub_tam_lin: sub10
---		port map(TAM_LIN, UM, s_tam_lin, '0', cout(0));
-
-
 	U_isBorder: isBorder
 		port map(countCol, countLin, TAM_COL, TAM_LIN, border);
 	
-
--- process(clk)
---	begin
---		if rising_edge(clk) then
---			
---		end if;
---	end process;
-
-
 end estrutural;

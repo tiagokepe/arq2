@@ -42,20 +42,16 @@ begin
 	U_ext_leste	: ext8to12 port map(v_leste, aux_leste);
 	U_ext_atual	: ext8to12 port map(v_atual, aux_atual);
 
-	reg_norte12 <= aux_norte;
 	U_reg_norte : register12 generic map(3 ns)
-  		   					 port map(clk, rst, ld, aux_norte, out_norte);
+  		   					 port map(clk, rst, ld, aux_norte, reg_norte12);
 
-	reg_sul12 <= aux_sul;
 	U_reg_sul : register12 generic map(3 ns) 
-						   port map(clk, rst, ld, aux_sul, out_sul);
+						   port map(clk, rst, ld, aux_sul, reg_sul12);
 
-	reg_leste12 <= aux_leste;
 	U_reg_leste : register12 generic map(3 ns)
-							 port map(clk, rst, ld, aux_leste, out_leste);
+							 port map(clk, rst, ld, aux_leste, reg_leste12);
 
-	reg_atual12 <= aux_atual;
 	U_reg_atual : register12 generic map(3 ns)
-							 port map(clk, rst, ld, aux_atual, out_atual);
+							 port map(clk, rst, ld, aux_atual, reg_atual12);
 
 end estrutural;

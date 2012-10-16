@@ -8,8 +8,8 @@ use ieee.numeric_std.all;
 use work.p_wires.all;
 package p_MATRIZ is
  
-  constant MAT_LIN : integer := 3;        -- linha da matriz
-  constant MAT_COL : integer := 3;        -- coluna da matriz
+  constant MAT_LIN : integer := 4;        -- linha da matriz
+  constant MAT_COL : integer := 4;        -- coluna da matriz
 
 --  constant MAT_LIN : reg10 := x"01"&"00";        -- linha da matriz
 --  constant MAT_COL : reg10 := x"01"&"00";        -- coluna da matriz

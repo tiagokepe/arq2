@@ -1,5 +1,5 @@
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
--- Seguimento 2 do pipeline, faz a soma = note + sul + leste + anterior
+-- Segmento 3 do pipeline, escolhe qual valor inserir na RAM
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 library ieee; use ieee.std_logic_1164.all;
@@ -24,14 +24,25 @@ architecture estrutural of seg3 is
 			 output : out reg8);
 	end component cast8to12;
 
+	component register8 is
+		generic (CNT_LATENCY: time := 3 ns);
+		port(rel, rst, ld: in  std_logic;
+			  D:           in  reg8;
+			  Q:           out reg8);
+	end component register8;
+
 	signal outMux: reg12;
+	signal outCast: reg8;
 	
 begin
 	U_mux: mux2X1
 		port map(sum, atual, sel, outMux);
 
 	U_cast: cast8to12
-		port map(outMux, result);
+		port map(outMux, outCast);
+
+	U_reg_atual : register8 generic map(3 ns)
+							 port map(clk, rst, ld, outCast, result);
 
 
 end estrutural;

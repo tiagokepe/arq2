@@ -30,6 +30,13 @@ architecture estrutural of seg2 is
 		 	 output : out reg12);
 	end component div2;
 
+	component register12 is
+		generic (CNT_LATENCY:time);
+		port(rel, rst, ld: in  std_logic;
+			 D:           in  reg12;
+			 Q:           out reg12);
+	end component register12;
+
 	signal cout : reg3;
 	signal outDiv8, outDiv2: reg12;
 	signal sumNS, sumLO, sumNSLO, sumAll: reg12;
@@ -51,6 +58,10 @@ begin
 		port map(atual, outDiv2);
 
 	U_result: add12
-		port map(outDiv8, outDiv2, resultSeg2, '0', cout(0));
+		port map(outDiv8, outDiv2, sumAll, '0', cout(0));
+
+	U_reg_leste : register12 generic map(3 ns)
+							 port map(clk, rst, ld, sumAll, resultSeg2);
+
 
 end estrutural;

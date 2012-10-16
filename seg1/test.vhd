@@ -59,6 +59,14 @@ architecture TB of test is
 		     reg_atual12  : out reg12);
 	end component seg1;
 
+	component seg2 is
+		port(clk, rst, ld, en 			 		: in  std_logic;
+			 norte, sul, leste, anterior, atual : in  reg12;
+			 resultSeg2					 		: out reg12
+		);
+	end component seg2;
+
+
 --    constant CLOCK : time := 20 ns;
 	constant TAM_COL : reg10  := conv_std_logic_vector(MAT_COL, 10);
 	constant TAM_LIN : reg10  := conv_std_logic_vector(MAT_LIN, 10);
@@ -80,7 +88,7 @@ architecture TB of test is
 	signal endNorte, endSul, endLeste, endAtual, endAnt : reg10;
 	signal isBorder: std_logic;
 	signal valueNorte, valueSul, valueLeste, valueAtual : reg8;
-	signal reg_N, reg_S, reg_L, reg_ATUAL : reg12;
+	signal reg_N, reg_S, reg_L, reg_ATUAL, reg_ANT, resultSeg2 : reg12;
 begin
 	U_clock: process
 	begin
@@ -104,6 +112,8 @@ begin
 
 	U_seg1: seg1 port map(rel, rst, '0', valueNorte, valueSul, valueLeste, valueAtual,
 						  reg_N, reg_S, reg_L, reg_ATUAL);
+
+	U_seg2: seg2 port map(rel, rst, ld, en, reg_N, reg_S, reg_L, reg_ANT, reg_ATUAL, resultSeg2);
 
 	U_ROM_INP: ROM
 		generic map ("matriz.txt", 1 ns)

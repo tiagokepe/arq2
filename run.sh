@@ -16,6 +16,8 @@
 
 # set -x
 
+cd src # vai para o diretório com os fontes
+
 # se passar um argumento para script, executa gtkwave
 if [ $# = 1 ] ; then WAVE="sim"
 else WAVE=
@@ -40,13 +42,16 @@ if [ ! -s ./${inp} ] ; then
 fi
 
 # compila simulador
-ghdl --clean
-for F in ${src} ; do
-    ghdl -a --ieee=synopsys -fexplicit ${F}.vhd 2>>log.txt || cat log.txt
-done
+#ghdl --clean
+#for F in ${src} ; do
+#    ghdl -a --ieee=synopsys -fexplicit ${F}.vhd 2>>log.txt || cat log.txt
+#done
+
+# Limpa e compila
+make clean && make build 2>> log.txt || cat log.txt
 
 if [[ $? == 0 ]]; then
-    ghdl -e --ieee=synopsys -fexplicit ${simulador} 2>>log.txt || cat log.txt
+    #ghdl -e --ieee=synopsys -fexplicit ${simulador} 2>>log.txt || cat log.txt
     if [[ $? == 0 ]] && [ -x ./${simulador} ] ; then
 	./${simulador} --ieee-asserts=disable --stop-time=1ms \
             --vcd=${visual} 2>${out}

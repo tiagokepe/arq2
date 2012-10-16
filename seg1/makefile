@@ -9,6 +9,7 @@ build:
 	ghdl -a --ieee=synopsys register10.vhd
 	ghdl -a --ieee=synopsys sub10.vhd
 	ghdl -a --ieee=synopsys seg0.vhd
+	ghdl -a --ieee=synopsys seg2.vhd
 	ghdl -a --ieee=synopsys rom.vhd
 	ghdl -a --ieee=synopsys ext8to12.vhd
 	ghdl -a --ieee=synopsys register12.vhd

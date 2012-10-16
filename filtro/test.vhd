@@ -22,7 +22,6 @@ entity test is
     variable v: std_logic_vector((newSize - 1) downto 0);
   begin
 	v := source((newSize - 1) downto 0);
-	report "No descrese = " & to_string(v) severity note;
     return v;
   end decrese_length;
 
@@ -38,6 +37,14 @@ architecture TB of test is
 			  address : in    address;
 			  data    : inout std_logic_vector);
 	end component ROM;
+
+	component RAM is
+		generic (MEM_LATENCY: time := 10 ns);
+		port (sel     : in    std_logic;
+			  wr      : in    std_logic;
+			  address : in    std_logic_vector;
+			  data    : inout std_logic_vector);
+	end COMPONENT RAM;
 
 	component seg0 is
 		port(clk, rst, ld, en 			: in std_logic;
@@ -79,7 +86,7 @@ architecture TB of test is
 	constant TAM_LIN : reg10  := conv_std_logic_vector(MAT_LIN, 10);
 	constant LEN_ADDRESS : integer := address'length;
 
-	signal rel,rst,ld,en : std_logic;
+	signal rel,rst,ldSeg0, ldSeg1, ldSeg2, ldSeg3, enSeg0, enSeg2, enSeg3 : std_logic;
 
 	signal selram : std_logic := '1';
 	signal selrom : std_logic := '1';
@@ -96,7 +103,6 @@ architecture TB of test is
 	signal isBorder: std_logic;
 	signal valueNorte, valueSul, valueLeste, valueAtual, resultSeg3 : reg8;
 	signal reg_N, reg_S, reg_L, reg_ANT, reg_ATUAL, resultSeg2 : reg12;
-	signal testeN, testeS, testeL, testeANT, testeATUAL : reg12;
 
 begin
 	U_clock: process
@@ -116,29 +122,26 @@ begin
 	end process;
 
     U_seg0: seg0
-    	port map(rel, rst, '1', en, TAM_COL, TAM_LIN, endNorte, endSul, endLeste, 
+    	port map(rel, rst, ldSeg0, enSeg0, TAM_COL, TAM_LIN, endNorte, endSul, endLeste, 
 				 endAtual, isBorder);
 
-	U_seg1: seg1 port map(rel, rst, '0', valueNorte, valueSul, valueLeste, valueAtual,
+	U_seg1: seg1 port map(rel, rst, ldSeg1, valueNorte, valueSul, valueLeste, valueAtual,
 						  reg_N, reg_S, reg_L, reg_ATUAL);
 
-	reg_ANT <= x"000";
-	testeN <= reg_N;
-	testeS <= reg_S;
-	testeL <= reg_L;
-	testeATUAL <= reg_ATUAL;
+	U_seg2: seg2 port map(rel, rst, ldSeg2, enSeg2, reg_N, reg_S, reg_L, reg_ANT,
+						  reg_ATUAL, resultSeg2);
 
-    U_seg2: seg2 port map(rel, rst, ld, en, testeN, testeS, testeL,
-						  reg_ANT, testeATUAL, resultSeg2);
+	U_seg3: seg3 port map(rel, rst, ldSeg3, enSeg3, isBorder, resultSeg2, reg_ATUAL, resultSeg3);
 
-	U_seg3: seg3 port map(rel, rst, ld, en, isBorder, resultSeg2, reg_ATUAL, resultSeg3);
-
---	U_seg2: seg2 port map(rel, rst, ld, en, reg_N, reg_S, reg_L, reg_ANT,
---						  reg_ATUAL, resultSeg2);
 
 	U_ROM_INP: ROM
-		generic map ("matriz.txt", 1 ns)
+		generic map ("matriz.txt", 10 ns)
 		port map (rst,selrom,a,datrom);
+
+	U_RAM_OUT: RAM
+		generic map (10 ns)
+		port map (selram,wr,a,datram);
+
 
 
   -- =================================================================
@@ -154,10 +157,18 @@ begin
   U_leROM: process                      -- copia da ROM para a RAM
     variable val : integer;
   begin
+	reg_ANT <= x"000"; -- Inicializa anterior
 
     phase <= '0';                       -- copia ROM para RAM
     wait until rst = '1';               -- ROM inicializada no reset
-    en <= '1'; 							-- Enable desabilitado
+    enSeg0 <= '1';
+    enSeg2 <= '1';
+    enSeg3 <= '1';
+	ldSeg0 <= '1';
+    ldSeg1 <= '1';
+    ldSeg2 <= '1';
+    ldSeg3 <= '1';
+
 
 	report "MEM_SIZE " & integer'image(MEM_SZ) severity note;
 	report "LENG = " & integer'image(LEN_ADDRESS) severity note;
@@ -173,50 +184,60 @@ begin
     wr <= '0';
     for i in 0 to (MEM_SZ - 1) loop
 
-      en <= '0'; 		  -- Habilita seg0 para o proximo clock
---	  wait for CLOCK_PER; -- espera seg 1 acabar
+	  wait for CLOCK_PER/2; -- espera seg 0 acabar
+      enSeg0 <= '0'; 		  -- Habilita seg0
+	  wait for CLOCK_PER/2; -- espera seg 0 acabar
+	  report "FIM seg0" severity note;
+      enSeg0 <= '1'; 		  -- Disable seg0 
+	  ldSeg1 <= '0';
 
-
---      wait until selrom = '0'; wait for 7 ns;  -- espera acesso aa ROM
---	  wait until en = '0';
-
-	  ------------  Segmento 2 do pipeline ------------------------------
+	  ------------  Segmento 1 do pipeline ------------------------------
 	  a <= decrese_length(endNorte, LEN_ADDRESS); -- ajusta tamanhos
-      selrom <= isBorder; wait for 7 ns;  -- espera acesso aa ROM
+      selrom <= isBorder; wait for 10 ns;  -- espera acesso aa ROM
 	  valueNorte <= datrom;
 
 	  a <= decrese_length(endSul, LEN_ADDRESS); -- ajusta tamanhos
-      selrom <= isBorder; wait for 7 ns;  -- espera acesso aa ROM
+      selrom <= isBorder; wait for 10 ns;  -- espera acesso aa ROM
 	  valueSul <= datrom;
 
 	  a <= decrese_length(endLeste, LEN_ADDRESS); -- ajusta tamanhos
-      selrom <= isBorder; wait for 7 ns;  -- espera acesso aa ROM
+      selrom <= isBorder; wait for 10 ns;  -- espera acesso aa ROM
 	  valueLeste <= datrom;
 
 	  a <= decrese_length(endAtual, LEN_ADDRESS); -- ajusta tamanhos
-      selrom <= isBorder; wait for 7 ns;  -- espera acesso aa ROM
+      selrom <= '0'; wait for 10 ns;  -- espera acesso aa ROM
 	  valueAtual <= datrom;
-
---      wait for 20 ns;  -- espera seg 1 acabar
+      wait for 10 ns;  -- espera seg 1 acabar
+	  report "FIM seg1" severity note;
 	  -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+	  ------------  Segmento 2 do pipeline ------------------------------
+	  ldSeg1 <= '1';
+	  ldSeg2 <= '0';
+	  wait for CLOCK_PER; -- espera seg 2 acabar
+	  report "FIM seg2" severity note;
+	  -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	  ------------  Segmento 3 do pipeline ------------------------------
+	  ldSeg2 <= '1';
+	  ldSeg3 <= '0';
 	  reg_ANT <= reg_ATUAL;
+	  wait for CLOCK_PER/2; -- espera seg 3 acabar
 
---      en <= '1'; 		  
+	  selram <= '0';
+	  wait for CLOCK_PER/4; -- espera seg 3 acabar
+	  datram <= resultSeg3; wait for 0 ns;
 
+	  wait for CLOCK_PER/4; -- espera seg 3 acabar
+	  ldSeg3 <= '1';
+	  selram <= '1';
+      report "Result = " & integer'image(CONV_INTEGER(resultSeg3)) severity note;
 
-          -- val := CONV_INTEGER(datrom);        
-          -- assert false report "romrd " & integer'image(val) severity note;
---      datram <= datrom; wait for 0 ns;
-          -- val := CONV_INTEGER(datram);        
-          -- assert false report "romcp " & integer'image(val) severity note;
---      selram <= '0';
---      wait until ramRDY = '0';
-      -- wait for RAM     
---      wait until ramRDY = '1';
---      selram <= '1';
+	  report "FIM seg3" severity note;
+	  -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
---      wait until selrom = '1';
+--      report "Result = " & integer'image(CONV_INTEGER(resultSeg3)) severity note;
+
 
       report "END LOOP = " & integer'image(i) severity note;
       
@@ -231,15 +252,19 @@ begin
 
       wait until rel = '0';
       selram <= '0';
-      wait until ramRDY = '0';
-      --wait for 11 ns;
+      --wait until ramRDY = '0';
+      wait for 11 ns;
       lido <= datram;
       wait for 0 ns;
          val := CONV_INTEGER(lido);        
          assert false report integer'image(val) severity note;
-      wait until ramRDY = '1';
+
+--      report "RAM[" & integer'image(i) &"] = " & to_string(lido) severity note;
+
+      --wait until ramRDY = '1';
       selram <= '1';
       wait until rel = '1';
+      --report "END LOOP = " & integer'image(i) severity note;
 
     end loop;
 
@@ -248,32 +273,16 @@ begin
 
 end TB;
 
---	mapeia_seg1: seg1 
---		port map(rel, rst, ld, N, S, L, ATUAL, reg_N, reg_S, reg_L, reg_ATUAL);
+          -- val := CONV_INTEGER(datrom);        
+          -- assert false report "romrd " & integer'image(val) severity note;
+--      datram <= datrom; wait for 0 ns;
+          -- val := CONV_INTEGER(datram);        
+          -- assert false report "romcp " & integer'image(val) severity note;
+--      selram <= '0';
+--      wait until ramRDY = '0';
+      -- wait for RAM     
+--      wait until ramRDY = '1';
+--      selram <= '1';
 
---	test: process
---	begin
---		ld <= '0';
---		N <= x"00";
---		S <= x"01";
---		L <= x"02";
---		ATUAL <= x"03";
---		wait for 18 ns;
+--      wait until selrom = '1';
 
---		ld <= '1';
---		wait for 2 ns;
---		N <= x"FF";
---		S <= x"AA";
---		L <= x"CC";
---		ATUAL <= x"88";
---		wait for 18 ns;
-
---		ld <= '0';
---		wait for 2 ns;
---		N <= x"00";
---		S <= x"01";
---		L <= x"10";
---		ATUAL <= x"11";
---		wait for 18 ns;
-
---	end process;
